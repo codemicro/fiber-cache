@@ -1,6 +1,7 @@
 package fcache
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber"
@@ -8,9 +9,10 @@ import (
 )
 
 var (
-	Config      internalConfig
-	statusCodes = make(map[string]int)
-	Cache       *gc.Cache
+	Cache           *gc.Cache
+	Config          internalConfig
+	statusCodes     = make(map[string]int)
+	currentKeyIndex = 0
 )
 
 func init() {
@@ -42,7 +44,13 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) {
 	}
 }
 
-func New(key string) func(*fiber.Ctx) {
+func New() func(*fiber.Ctx) {
+	key := "cacheKey-" + strconv.Itoa(currentKeyIndex)
+	currentKeyIndex += 1
+	return createMiddleware(key, Config.DefaultTTL)
+}
+
+func NewWithKey(key string) func(*fiber.Ctx) {
 	return createMiddleware(key, Config.DefaultTTL)
 }
 

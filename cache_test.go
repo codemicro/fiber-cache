@@ -2,6 +2,7 @@ package fcache
 
 import (
 	"bytes"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
@@ -16,6 +17,12 @@ func createNewCacheForTest() {
 	Cache = gc.New(Config.DefaultTTL, Config.CleanupInterval)
 }
 
+func getResponseBody(resp *http.Response) string {
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(resp.Body)
+	return buf.String()
+}
+
 func Test_valueStored(t *testing.T) {
 	createNewCacheForTest()
 	app := fiber.New()
@@ -23,7 +30,7 @@ func Test_valueStored(t *testing.T) {
 	responseText := "thisIsAResponse"
 	handlerKey := "sampleKey"
 
-	app.Get("/", New(handlerKey), func(c *fiber.Ctx) {
+	app.Get("/", NewWithKey(handlerKey), func(c *fiber.Ctx) {
 		c.Send(responseText)
 	})
 
@@ -44,7 +51,7 @@ func Test_cacheValueReturned(t *testing.T) {
 	modResponse := "thisIsAModifiedResponse"
 	handlerKey := "sampleKey"
 
-	app.Get("/", New(handlerKey), func(c *fiber.Ctx) {
+	app.Get("/", NewWithKey(handlerKey), func(c *fiber.Ctx) {
 		c.Send(responseText)
 	})
 
@@ -52,9 +59,7 @@ func Test_cacheValueReturned(t *testing.T) {
 
 	resp, _ := app.Test(httptest.NewRequest("GET", "/", nil))
 
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(resp.Body)
-	returnedResponse := buf.String()
+	returnedResponse := getResponseBody(resp)
 
 	if returnedResponse != modResponse {
 		t.Fatal("Value in cache does not match expected")
@@ -80,11 +85,38 @@ func Test_customTTL(t *testing.T) {
 
 	resp, _ := app.Test(httptest.NewRequest("GET", "/", nil))
 
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(resp.Body)
-	returnedResponse := buf.String()
+	returnedResponse := getResponseBody(resp)
 
 	if returnedResponse != responseText {
 		t.Fatal("Cache was not refreshed after TTL expired")
 	}
+}
+
+func Test_automaticKeyGeneration(t *testing.T) {
+	createNewCacheForTest()
+	app := fiber.New()
+
+	responseText1 := "thisIsAResponse"
+	responseText2 := "thisIsADifferentResponse"
+
+	app.Get("/", New(), func(c *fiber.Ctx) {
+		c.Send(responseText1)
+	})
+
+	app.Get("/other", New(), func(c *fiber.Ctx) {
+		c.Send(responseText2)
+	})
+
+	resp1, _ := app.Test(httptest.NewRequest("GET", "/", nil))
+	resp2, _ := app.Test(httptest.NewRequest("GET", "/other", nil))
+
+	returnedResponse1 := getResponseBody(resp1)
+	returnedResponse2 := getResponseBody(resp2)
+
+	if returnedResponse1 == returnedResponse2 {
+		t.Fatal("A collision has occured between automatically generated keys")
+	} else if returnedResponse1 != responseText1 || returnedResponse2 != responseText2 {
+		t.Fatal("Incorrect values are being stored in cache for automatically generated keys")
+	}
+
 }
