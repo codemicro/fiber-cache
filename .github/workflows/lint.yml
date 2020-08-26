@@ -1,0 +1,21 @@
+name: Lint codebase
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  Golint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v2
+      - name: Run Golint
+        uses: reviewdog/action-golangci-lint@v1
+        with:
+          golangci_lint_flags: "--tests=false"
