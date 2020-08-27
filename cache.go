@@ -1,4 +1,4 @@
-// package fcache provides caching middleware. The caching engine can be accessed through the Cache variable.
+// package fcache provides caching middleware for the Fiber web framework. The caching engine can be accessed through the Cache variable.
 package fcache
 
 import (
@@ -40,6 +40,8 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) {
 			c.Fasthttp.Response.SetStatusCode(statusCode)
 			return
 		}
+
+		c.Locals("cacheKey", key)
 
 		c.Next()
 
