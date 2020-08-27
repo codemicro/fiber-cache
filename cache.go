@@ -1,3 +1,4 @@
+// package fcache provides caching middleware. The caching engine can be accessed through the Cache variable.
 package fcache
 
 import (
@@ -10,9 +11,12 @@ import (
 
 var (
 	Cache           *gc.Cache
-	Config          internalConfig
-	statusCodes     = make(map[string]int)
 	currentKeyIndex = 0
+	statusCodes     = make(map[string]int)
+	Config          internalConfig
+)
+
+const (
 	AutoGenerateKey = ""
 )
 
@@ -51,10 +55,12 @@ func generateKey() string {
 	return key
 }
 
+// New returns a new instance of the caching middleware, with an automatically generated key and the default TTL.
 func New() func(*fiber.Ctx) {
 	return createMiddleware(generateKey(), Config.DefaultTTL)
 }
 
+// NewWithKey returns a new instance of the caching middleware with the default TTL and the option to set your own cache key. If this is an empty string or AutoGenerateKey, a key will be automatically generated.
 func NewWithKey(key string) func(*fiber.Ctx) {
 	if key == AutoGenerateKey {
 		key = generateKey()
@@ -62,6 +68,7 @@ func NewWithKey(key string) func(*fiber.Ctx) {
 	return createMiddleware(key, Config.DefaultTTL)
 }
 
+// NewWithTTL returns a neew instance of the caching middleware with the option to define your own cache key and your own TTL. If the cache key you set is an empty string or AutoGenerateKey, a key will be automatically generated.
 func NewWithTTL(key string, ttl time.Duration) func(*fiber.Ctx) {
 	if key == AutoGenerateKey {
 		key = generateKey()
