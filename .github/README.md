@@ -21,13 +21,36 @@ fcache.Config.DefaultTTL = time.Minute * 2
 If you want to override the default TTL for a specific endpoint, you can do the following:
 
 ```go
-fcache.NewWithTTL(fcache.AutoGenerateKey, time.Second*20)
+app.Get("/your/route", fcache.NewWithTTL(fcache.AutoGenerateKey, time.Second*20), yourHandler)
 ```
 
 If you want to set your own custom key, you can do the following:
 
 ```go
-fcache.NewWithKey("yourKeyHere")
+app.Get("/your/route", fcache.NewWithKey("yourKeyHere"), yourHandler)
+```
+
+The cache key for the current route is stored in `c.Locals` as `cacheKey`. You can also access the underlying cache engine through the `fcache.Cache` variable. [Please click here for information about that.](https://github.com/patrickmn/go-cache)
+
+```go
+app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) {
+    cacheKey := c.Locals("cacheKey").(string) // -> cacheKey-0
+    
+    data, found := fcache.Cache.Get(cacheKey)
+
+    // ...
+
+    c.Send("My cache key is: " + cacheKey) // -> My cache key is: cacheKey-0
+})
+```
+
+### Installation
+You must have Go 1.11 or higher installed before attempting installation.
+
+Installation is done using the `go get` command:
+
+```
+go get -u github.com/codemicro/fiber-cache
 ```
 
 ### Benchmarks
@@ -42,4 +65,11 @@ app.Get("/longtime", fcache.New(), func(c *fiber.Ctx) {
 ```
 
 When this endpoint is first requested, it takes 10.035 seconds for a response to be returned. After that, across the next 20 requests, it takes an average of 0.01094 seconds for a response to be returned.
+
+### Licence
+fiber-cache is free and open source software covered by the Mozilla Public Licence v2.
+
+#### Third party library licences
+* [gofiber/fiber](https://github.com/gofiber/fiber/blob/master/LICENSE)
+* [patrickmn/go-cache](https://github.com/patrickmn/go-cache/blob/master/LICENSE)
 
