@@ -13,6 +13,7 @@ var (
 	Config          internalConfig
 	statusCodes     = make(map[string]int)
 	currentKeyIndex = 0
+	AutoGenerateKey = ""
 )
 
 func init() {
@@ -44,16 +45,26 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) {
 	}
 }
 
-func New() func(*fiber.Ctx) {
+func generateKey() string {
 	key := "cacheKey-" + strconv.Itoa(currentKeyIndex)
 	currentKeyIndex += 1
-	return createMiddleware(key, Config.DefaultTTL)
+	return key
+}
+
+func New() func(*fiber.Ctx) {
+	return createMiddleware(generateKey(), Config.DefaultTTL)
 }
 
 func NewWithKey(key string) func(*fiber.Ctx) {
+	if key == AutoGenerateKey {
+		key = generateKey()
+	}
 	return createMiddleware(key, Config.DefaultTTL)
 }
 
 func NewWithTTL(key string, ttl time.Duration) func(*fiber.Ctx) {
+	if key == AutoGenerateKey {
+		key = generateKey()
+	}
 	return createMiddleware(key, ttl)
 }
