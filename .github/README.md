@@ -47,7 +47,7 @@ app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) {
 
 ### Reference
 
-[http://godoc.org/github.com/patrickmn/go-cache](http://godoc.org/github.com/patrickmn/go-cache)
+[https://pkg.go.dev/github.com/codemicro/fiber-cache@v1.0.0](https://pkg.go.dev/github.com/codemicro/fiber-cache@v1.0.0)
 
 ### Installation
 You must have Go 1.11 or higher installed before attempting installation.
