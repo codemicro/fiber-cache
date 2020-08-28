@@ -120,3 +120,22 @@ func Test_automaticKeyGeneration(t *testing.T) {
 	}
 
 }
+
+func Test_automaticKeyGenerationWithFlag(t *testing.T) {
+	createNewCacheForTest()
+
+	app := fiber.New()
+	responseText := "hello world this is a response"
+	var cacheKey string
+
+	app.Get("/", NewWithKey(AutoGenerateKey), func(c *fiber.Ctx) {
+		cacheKey = c.Locals("cacheKey").(string)
+		c.Send(responseText)
+	})
+
+	app.Test(httptest.NewRequest("GET", "/", nil))
+
+	if cacheKey == "" {
+		t.Fatal("Automatic key generation is failing or the cache key is not being set")
+	}
+}
