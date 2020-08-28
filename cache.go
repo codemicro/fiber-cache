@@ -3,6 +3,7 @@ package fcache
 
 import (
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gofiber/fiber"
@@ -13,6 +14,7 @@ var (
 	Cache           *gc.Cache
 	currentKeyIndex = 0
 	statusCodes     = make(map[string]int)
+	codesMutex      sync.Mutex
 	Config          internalConfig
 )
 
@@ -31,13 +33,24 @@ type internalConfig struct {
 	DefaultTTL      time.Duration
 }
 
+func saveStatusCode(key string, code int) {
+	codesMutex.Lock()
+	statusCodes[key] = code
+	codesMutex.Unlock()
+}
+
+func getStatusCode(key string) int {
+	codesMutex.Lock()
+	defer codesMutex.Unlock()
+	return statusCodes[key]
+}
+
 func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) {
 	return func(c *fiber.Ctx) {
 		val, found := Cache.Get(key)
 		if found {
-			statusCode := statusCodes[key]
 			c.Fasthttp.Response.SetBody(val.([]byte))
-			c.Fasthttp.Response.SetStatusCode(statusCode)
+			c.Fasthttp.Response.SetStatusCode(getStatusCode(key))
 			return
 		}
 
@@ -46,7 +59,8 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) {
 		c.Next()
 
 		Cache.Set(key, c.Fasthttp.Response.Body(), ttl)
-		statusCodes[key] = c.Fasthttp.Response.StatusCode()
+
+		saveStatusCode(key, c.Fasthttp.Response.StatusCode())
 
 	}
 }
