@@ -84,7 +84,7 @@ func NewWithKey(key string) func(*fiber.Ctx) {
 	return createMiddleware(key, Config.DefaultTTL)
 }
 
-// NewWithTTL returns a neew instance of the caching middleware with the option to define your own cache key and your own TTL. If the cache key you set is an empty string or AutoGenerateKey, a key will be automatically generated.
+// NewWithTTL returns a new instance of the caching middleware with the option to define your own cache key and your own TTL. If the cache key you set is an empty string or AutoGenerateKey, a key will be automatically generated.
 func NewWithTTL(key string, ttl time.Duration) func(*fiber.Ctx) {
 	if key == AutoGenerateKey {
 		key = generateKey()
