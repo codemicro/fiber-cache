@@ -45,6 +45,14 @@ app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) {
 })
 ```
 
+### Limitations
+
+fiber-cache will not cache headers. If you want headers to be added to every response on a specific endpoint, you will have to add a custom middleware before the cache middleware.
+
+```go
+app.Get("/", func(c *fiber.Ctx) { c.Append("server", "potato") }, fcache.New(), yourHandler)
+```
+
 ### Reference
 
 [https://pkg.go.dev/github.com/codemicro/fiber-cache](https://pkg.go.dev/github.com/codemicro/fiber-cache)
