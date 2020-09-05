@@ -1,5 +1,5 @@
 # fiber-cache
-![Run tests](https://github.com/codemicro/fiber-cache/workflows/Run%20tests/badge.svg) ![Gosec audit](https://github.com/codemicro/fiber-cache/workflows/Gosec%20audit/badge.svg) [![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/codemicro/fiber-cache)
+![Run tests](https://github.com/codemicro/fiber-cache/workflows/Run%20tests/badge.svg) ![Gosec audit](https://github.com/codemicro/fiber-cache/workflows/Gosec%20audit/badge.svg) [![PkgGoDev](https://pkg.go.dev/badge/codemicro/fiber-cache)](https://pkg.go.dev/codemicro/fiber-cache)
 
 fiber-cache is middleware that provides caching for specific routes in a Fiber application.
 
