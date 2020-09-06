@@ -25,6 +25,12 @@ You can also set the TTL for each different handler, for example if you want to 
 app.Get("/your/route", fcache.NewWithTTL(fcache.AutoGenerateKey, time.Second*20), yourHandler)
 ```
 
+Whenever you have the option to set a TTL, you can also set it to have no expiration. The handler function will be called once and the value stored until your program has exited. This can be done using `fcache.NoExpiration`.
+
+```go
+app.Get("/your/route", fcache.NewWithTTL(fcache.AutoGenerateKey, fcache.NoExpiration), yourHandler)
+```
+
 Internally, caching is done using key-value pairs. Normally, the keys are automatically generated, but you can choose to set them manually if you want.
 
 ```go
@@ -50,7 +56,10 @@ app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) {
 fiber-cache will not cache headers. If you want headers to be added to every response on a specific endpoint, you will have to add a custom middleware before the cache middleware.
 
 ```go
-app.Get("/", func(c *fiber.Ctx) { c.Append("server", "potato"); c.Next() }, fcache.New(), yourHandler)
+app.Get("/", func(c *fiber.Ctx) {
+        c.Append("server", "potato")
+        c.Next()
+    }, fcache.New(), yourHandler)
 ```
 
 ### Reference

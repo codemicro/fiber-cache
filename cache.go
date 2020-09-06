@@ -20,11 +20,12 @@ var (
 
 const (
 	AutoGenerateKey = ""
+	NoExpiration = gc.NoExpiration
 )
 
 func init() {
-	Config.DefaultTTL = time.Duration(5 * time.Minute)
-	Config.CleanupInterval = time.Duration(10 * time.Minute)
+	Config.DefaultTTL = 5 * time.Minute
+	Config.CleanupInterval = 10 * time.Minute
 	Cache = gc.New(Config.DefaultTTL, Config.CleanupInterval)
 }
 
