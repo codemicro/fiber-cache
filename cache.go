@@ -20,7 +20,7 @@ var (
 
 const (
 	AutoGenerateKey = ""
-	NoExpiration = gc.NoExpiration
+	NoExpiration    = gc.NoExpiration
 )
 
 func init() {
@@ -46,22 +46,24 @@ func getStatusCode(key string) int {
 	return statusCodes[key]
 }
 
-func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) {
-	return func(c *fiber.Ctx) {
+func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
 		val, found := Cache.Get(key)
 		if found {
-			c.Fasthttp.Response.SetBody(val.([]byte))
-			c.Fasthttp.Response.SetStatusCode(getStatusCode(key))
-			return
+			c.Request().Response.SetBody(val.([]byte))
+			c.Request().Response.SetStatusCode(getStatusCode(key))
+			return nil
 		}
 
 		c.Locals("cacheKey", key)
 
 		c.Next()
 
-		Cache.Set(key, c.Fasthttp.Response.Body(), ttl)
+		Cache.Set(key, c.Request().Response.Body(), ttl)
 
-		saveStatusCode(key, c.Fasthttp.Response.StatusCode())
+		saveStatusCode(key, c.Request().Response.StatusCode())
+
+		return nil
 
 	}
 }
@@ -73,12 +75,12 @@ func generateKey() string {
 }
 
 // New returns a new instance of the caching middleware, with an automatically generated key and the default TTL.
-func New() func(*fiber.Ctx) {
+func New() func(*fiber.Ctx) error {
 	return createMiddleware(generateKey(), Config.DefaultTTL)
 }
 
 // NewWithKey returns a new instance of the caching middleware with the default TTL and the option to set your own cache key. If this is an empty string or AutoGenerateKey, a key will be automatically generated.
-func NewWithKey(key string) func(*fiber.Ctx) {
+func NewWithKey(key string) func(*fiber.Ctx) error {
 	if key == AutoGenerateKey {
 		key = generateKey()
 	}
@@ -86,7 +88,7 @@ func NewWithKey(key string) func(*fiber.Ctx) {
 }
 
 // NewWithTTL returns a new instance of the caching middleware with the option to define your own cache key and your own TTL. If the cache key you set is an empty string or AutoGenerateKey, a key will be automatically generated.
-func NewWithTTL(key string, ttl time.Duration) func(*fiber.Ctx) {
+func NewWithTTL(key string, ttl time.Duration) func(*fiber.Ctx) error {
 	if key == AutoGenerateKey {
 		key = generateKey()
 	}
