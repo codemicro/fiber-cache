@@ -40,14 +40,14 @@ app.Get("/your/route", fcache.NewWithKey("yourKeyHere"), yourHandler)
 The cache key for the current route is stored in `c.Locals` as `cacheKey`. This is especially useful if you're using automatically generated keys and want to access the underlying cache engine. This can be done through the `fcache.Cache` variable. [Please click here for information about that.](https://github.com/patrickmn/go-cache)
 
 ```go
-app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) {
+app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) error {
     cacheKey := c.Locals("cacheKey").(string) // -> cacheKey-0
     
     data, found := fcache.Cache.Get(cacheKey)
 
     // ...
 
-    c.Send("My cache key is: " + cacheKey) // -> My cache key is: cacheKey-0
+    return c.Send("My cache key is: " + cacheKey) // -> My cache key is: cacheKey-0
 })
 ```
 
@@ -56,9 +56,9 @@ app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) {
 fiber-cache will not cache headers. If you want headers to be added to every response on a specific endpoint, you will have to add a custom middleware before the cache middleware.
 
 ```go
-app.Get("/", func(c *fiber.Ctx) {
+app.Get("/", func(c *fiber.Ctx) error {
         c.Append("server", "potato")
-        c.Next()
+        return c.Next()
     }, fcache.New(), yourHandler)
 ```
 
@@ -88,9 +88,9 @@ import (
 Consider the following example:
 
 ```go
-app.Get("/longtime", fcache.New(), func(c *fiber.Ctx) {
+app.Get("/longtime", fcache.New(), func(c *fiber.Ctx) error {
     time.Sleep(time.Second * 10)
-    c.Send("Hello world")
+    return c.Send("Hello world")
 })
 ```
 
