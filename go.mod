@@ -1,6 +1,6 @@
-module github.com/codemicro/fiber-cache
+module github.com/codemicro/fiber-cache/v2
 
-go 1.11
+go 1.14
 
 require (
 	github.com/gofiber/fiber/v2 v2.0.0
