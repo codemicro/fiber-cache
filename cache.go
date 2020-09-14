@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	gc "github.com/patrickmn/go-cache"
 )
 
@@ -50,8 +50,8 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		val, found := Cache.Get(key)
 		if found {
-			c.Request().Response.SetBody(val.([]byte))
-			c.Request().Response.SetStatusCode(getStatusCode(key))
+			c.Response().SetBody(val.([]byte))
+			c.Response().SetStatusCode(getStatusCode(key))
 			return nil
 		}
 
@@ -59,9 +59,9 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 
 		c.Next()
 
-		Cache.Set(key, c.Request().Response.Body(), ttl)
+		Cache.Set(key, c.Response().Body(), ttl)
 
-		saveStatusCode(key, c.Request().Response.StatusCode())
+		saveStatusCode(key, c.Response().StatusCode())
 
 		return nil
 
