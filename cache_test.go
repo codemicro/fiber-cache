@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	gc "github.com/patrickmn/go-cache"
 )
 
@@ -30,8 +30,9 @@ func Test_valueStored(t *testing.T) {
 	responseText := "thisIsAResponse"
 	handlerKey := "sampleKey"
 
-	app.Get("/", NewWithKey(handlerKey), func(c *fiber.Ctx) {
-		c.Send(responseText)
+	app.Get("/", NewWithKey(handlerKey), func(c *fiber.Ctx) error {
+		c.SendString(responseText)
+		return nil
 	})
 
 	app.Test(httptest.NewRequest("GET", "/", nil))
@@ -51,8 +52,9 @@ func Test_cacheValueReturned(t *testing.T) {
 	modResponse := "thisIsAModifiedResponse"
 	handlerKey := "sampleKey"
 
-	app.Get("/", NewWithKey(handlerKey), func(c *fiber.Ctx) {
-		c.Send(responseText)
+	app.Get("/", NewWithKey(handlerKey), func(c *fiber.Ctx) error {
+		c.SendString(responseText)
+		return nil
 	})
 
 	Cache.Set(handlerKey, []byte(modResponse), Config.DefaultTTL)
@@ -73,8 +75,9 @@ func Test_customTTL(t *testing.T) {
 	responseText := "thisIsAResponse"
 	handlerKey := "sampleKey"
 
-	app.Get("/", NewWithTTL(handlerKey, time.Second*2), func(c *fiber.Ctx) {
-		c.Send(responseText)
+	app.Get("/", NewWithTTL(handlerKey, time.Second*2), func(c *fiber.Ctx) error {
+		c.SendString(responseText)
+		return nil
 	})
 
 	app.Test(httptest.NewRequest("GET", "/", nil))
@@ -99,12 +102,14 @@ func Test_automaticKeyGeneration(t *testing.T) {
 	responseText1 := "thisIsAResponse"
 	responseText2 := "thisIsADifferentResponse"
 
-	app.Get("/", New(), func(c *fiber.Ctx) {
-		c.Send(responseText1)
+	app.Get("/", New(), func(c *fiber.Ctx) error {
+		c.SendString(responseText1)
+		return nil
 	})
 
-	app.Get("/other", New(), func(c *fiber.Ctx) {
-		c.Send(responseText2)
+	app.Get("/other", New(), func(c *fiber.Ctx) error {
+		c.SendString(responseText2)
+		return nil
 	})
 
 	resp1, _ := app.Test(httptest.NewRequest("GET", "/", nil))
@@ -118,7 +123,6 @@ func Test_automaticKeyGeneration(t *testing.T) {
 	} else if returnedResponse1 != responseText1 || returnedResponse2 != responseText2 {
 		t.Fatal("Incorrect values are being stored in cache for automatically generated keys")
 	}
-
 }
 
 func Test_automaticKeyGenerationWithFlag(t *testing.T) {
@@ -128,9 +132,10 @@ func Test_automaticKeyGenerationWithFlag(t *testing.T) {
 	responseText := "hello world this is a response"
 	var cacheKey string
 
-	app.Get("/", NewWithKey(AutoGenerateKey), func(c *fiber.Ctx) {
+	app.Get("/", NewWithKey(AutoGenerateKey), func(c *fiber.Ctx) error {
 		cacheKey = c.Locals("cacheKey").(string)
-		c.Send(responseText)
+		c.SendString(responseText)
+		return nil
 	})
 
 	app.Test(httptest.NewRequest("GET", "/", nil))
