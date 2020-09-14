@@ -67,7 +67,7 @@ app.Get("/", func(c *fiber.Ctx) {
 [https://pkg.go.dev/github.com/codemicro/fiber-cache](https://pkg.go.dev/github.com/codemicro/fiber-cache)
 
 ### Installation
-You must have Go 1.11 or higher installed before attempting installation.
+You must have Go 1.14 or higher installed before attempting installation.
 
 Installation is done using the `go get` command:
 

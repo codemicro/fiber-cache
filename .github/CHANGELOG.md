@@ -6,21 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 (Dates are in YYYY-MM-DD format. This message is mainly for my own sake.)
 
 ## [Unreleased]
+
+## [1.1.0] - 2020-09-14
 ### Changed
-- Update to support Fiber version 1.15.
+* Update to support Fiber version 2.0.0.
+### Removed
+* Removed Go 1.11.x support.
 
 ## [1.0.2] - 2020-09-06
 ### Added
-- Add support for caching without expiration.
+* Add support for caching without expiration.
 
 ## [1.0.1] - 2020-08-28
 ### Fixed
-- Add missing mutex to status code storage map (t'was an oversight).
+* Add missing mutex to status code storage map (t'was an oversight).
 
 ## [1.0.0] - 2020-08-27
-- Initial release
+* Initial release
 
-[Unreleased]: https://github.com/codemicro/fiber-cache/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/codemicro/fiber-cache/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/codemicro/fiber-cache/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/codemicro/fiber-cache/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/codemicro/fiber-cache/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/codemicro/fiber-cache/releases/tag/v1.0.0
