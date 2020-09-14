@@ -1,5 +1,5 @@
 # fiber-cache
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/codemicro/fiber-cache)](https://github.com/codemicro/fiber-cache/releases/latest) [![Keep a Changelog v1.0.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.0.0-%23E05735)](https://github.com/codemicro/fiber-cache/blob/master/.github/CHANGELOG.md) [![PkgGoDev](https://pkg.go.dev/badge/codemicro/fiber-cache)](https://pkg.go.dev/github.com/codemicro/fiber-cache) ![Tests](https://github.com/codemicro/fiber-cache/workflows/Run%20tests/badge.svg) ![Gosec audit](https://github.com/codemicro/fiber-cache/workflows/Gosec%20audit/badge.svg)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/codemicro/fiber-cache)](https://github.com/codemicro/fiber-cache/releases/latest) [![Keep a Changelog v1.0.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.0.0-%23E05735)](https://github.com/codemicro/fiber-cache/blob/master/.github/CHANGELOG.md) [![PkgGoDev](https://pkg.go.dev/badge/codemicro/fiber-cache/v2)](https://pkg.go.dev/github.com/codemicro/fiber-cache/v2) ![Tests](https://github.com/codemicro/fiber-cache/workflows/Run%20tests/badge.svg) ![Gosec audit](https://github.com/codemicro/fiber-cache/workflows/Gosec%20audit/badge.svg)
 
 fiber-cache is middleware that provides caching for specific routes in a Fiber application.
 
@@ -64,7 +64,7 @@ app.Get("/", func(c *fiber.Ctx) error {
 
 ### Reference
 
-[https://pkg.go.dev/github.com/codemicro/fiber-cache](https://pkg.go.dev/github.com/codemicro/fiber-cache)
+[https://pkg.go.dev/github.com/codemicro/fiber-cache/v2](https://pkg.go.dev/github.com/codemicro/fiber-cache/v2)
 
 ### Installation
 You must have Go 1.14 or higher installed before attempting installation.
