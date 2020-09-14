@@ -57,13 +57,14 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 
 		c.Locals("cacheKey", key)
 
-		c.Next()
+		err := c.Next()
 
-		Cache.Set(key, c.Response().Body(), ttl)
+		if err != nil {
+			Cache.Set(key, c.Response().Body(), ttl)
+			saveStatusCode(key, c.Response().StatusCode())
+		}
 
-		saveStatusCode(key, c.Response().StatusCode())
-
-		return nil
+		return err
 
 	}
 }
