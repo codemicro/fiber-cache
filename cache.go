@@ -59,7 +59,7 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 
 		err := c.Next()
 
-		if err != nil {
+		if err == nil {
 			Cache.Set(key, c.Response().Body(), ttl)
 			saveStatusCode(key, c.Response().StatusCode())
 		}

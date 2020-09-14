@@ -31,8 +31,7 @@ func Test_valueStored(t *testing.T) {
 	handlerKey := "sampleKey"
 
 	app.Get("/", NewWithKey(handlerKey), func(c *fiber.Ctx) error {
-		c.SendString(responseText)
-		return nil
+		return c.SendString(responseText)
 	})
 
 	app.Test(httptest.NewRequest("GET", "/", nil))
