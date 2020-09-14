@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [1.1.0] - 2020-09-14
+## [2.0.0] - 2020-09-14
 ### Changed
 * Update to support Fiber version 2.0.0.
 ### Removed
@@ -24,8 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [1.0.0] - 2020-08-27
 * Initial release
 
-[Unreleased]: https://github.com/codemicro/fiber-cache/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/codemicro/fiber-cache/compare/v1.0.2...v1.1.0
+[Unreleased]: https://github.com/codemicro/fiber-cache/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/codemicro/fiber-cache/compare/v1.0.2...v2.0.0
 [1.0.2]: https://github.com/codemicro/fiber-cache/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/codemicro/fiber-cache/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/codemicro/fiber-cache/releases/tag/v1.0.0
