@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [2.0.1] - 2020-09-14
 ### Fixed
 * Errors are now properly forwarded to the error handler and are no longer lost in the endless void of space and time.
+  * Thanks @Fenny
 
 ## [2.0.0] - 2020-09-14
 ### Changed
