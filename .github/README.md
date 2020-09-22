@@ -53,7 +53,7 @@ app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) error {
 
 ### Limitations
 
-fiber-cache will not cache headers. If you want headers to be added to every response on a specific endpoint, you will have to add a custom middleware before the cache middleware.
+Aside from the `Content-Type` header, fiber-cache will not cache headers. If you want a certain header to be added to every response on a specific endpoint, you'll have to add a custom middleware before the cache middleware.
 
 ```go
 app.Get("/", func(c *fiber.Ctx) error {
@@ -61,6 +61,8 @@ app.Get("/", func(c *fiber.Ctx) error {
         return c.Next()
     }, fcache.New(), yourHandler)
 ```
+
+The `Content-Type` header is the only header that is automatically cached and sent.
 
 ### Reference
 
