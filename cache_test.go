@@ -38,7 +38,7 @@ func Test_valueStored(t *testing.T) {
 
 	value, _ := Cache.Get(handlerKey)
 
-	if string(value.([]byte)) != responseText {
+	if string(value.(CacheEntry).Body) != responseText {
 		t.Fatal("Value in cache does not match expected")
 	}
 }
@@ -56,7 +56,11 @@ func Test_cacheValueReturned(t *testing.T) {
 		return nil
 	})
 
-	Cache.Set(handlerKey, []byte(modResponse), Config.DefaultTTL)
+	Cache.Set(handlerKey, CacheEntry{
+		Body:        []byte(modResponse),
+		StatusCode:  200,
+		ContentType: []byte("text/plain"),
+	}, Config.DefaultTTL)
 
 	resp, _ := app.Test(httptest.NewRequest("GET", "/", nil))
 
@@ -141,5 +145,23 @@ func Test_automaticKeyGenerationWithFlag(t *testing.T) {
 
 	if cacheKey == "" {
 		t.Fatal("Automatic key generation is failing or the cache key is not being set")
+	}
+}
+
+func Test_correctContentTypeSet(t *testing.T) {
+	createNewCacheForTest()
+
+	app := fiber.New()
+
+	app.Get("/", New(), func(c *fiber.Ctx) error {
+		return c.JSON(map[string]string{"hello":"world"})
+	})
+
+	app.Test(httptest.NewRequest("GET", "/", nil)) // load cache response
+
+	resp, _ := app.Test(httptest.NewRequest("GET", "/", nil))
+
+	if resp.Header["Content-Type"][0] != "application/json" {
+		t.Fatal("The content type header is not being set correctly")
 	}
 }
