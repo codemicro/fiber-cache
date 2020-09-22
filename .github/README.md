@@ -61,6 +61,13 @@ app.Get("/", func(c *fiber.Ctx) error {
         return c.Next()
     }, fcache.New(), yourHandler)
 ```
+since fiber-cache dont store cache, this will keep the response as a json, with-out change it into text
+```go 
+app.Get("/",func(c*fiber.Ctx)error{
+    c.Set("Content-Type","application/json")
+    return c.Next()
+ }, fcache.New(), yourHandler)
+```
 
 ### Reference
 
