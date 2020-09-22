@@ -3,7 +3,6 @@ package fcache
 
 import (
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,8 +12,6 @@ import (
 var (
 	Cache           *gc.Cache
 	currentKeyIndex = 0
-	statusCodes     = make(map[string]int)
-	codesMutex      sync.Mutex
 	Config          internalConfig
 )
 
@@ -29,29 +26,25 @@ func init() {
 	Cache = gc.New(Config.DefaultTTL, Config.CleanupInterval)
 }
 
+type CacheEntry struct {
+	Body []byte
+	StatusCode int
+	ContentType []byte
+}
+
 type internalConfig struct {
 	CleanupInterval time.Duration
 	DefaultTTL      time.Duration
-}
-
-func saveStatusCode(key string, code int) {
-	codesMutex.Lock()
-	statusCodes[key] = code
-	codesMutex.Unlock()
-}
-
-func getStatusCode(key string) int {
-	codesMutex.Lock()
-	defer codesMutex.Unlock()
-	return statusCodes[key]
 }
 
 func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		val, found := Cache.Get(key)
 		if found {
-			c.Response().SetBody(val.([]byte))
-			c.Response().SetStatusCode(getStatusCode(key))
+			entry := val.(CacheEntry)
+			c.Response().SetBody(entry.Body)
+			c.Response().SetStatusCode(entry.StatusCode)
+			c.Response().Header.SetContentTypeBytes(entry.ContentType)
 			return nil
 		}
 
@@ -60,8 +53,13 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 		err := c.Next()
 
 		if err == nil {
-			Cache.Set(key, c.Response().Body(), ttl)
-			saveStatusCode(key, c.Response().StatusCode())
+			newEntry := CacheEntry{
+				Body:        c.Response().Body(),
+				StatusCode:  c.Response().StatusCode(),
+				ContentType: c.Response().Header.ContentType(),
+			}
+
+			Cache.Set(key, newEntry, ttl)
 		}
 
 		return err
