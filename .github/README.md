@@ -90,13 +90,27 @@ import (
 Consider the following example:
 
 ```go
-app.Get("/longtime", fcache.New(), func(c *fiber.Ctx) error {
-    time.Sleep(time.Second * 10)
-    return c.Send("Hello world")
+app.Get("/", fcache.New(), func(c *fiber.Ctx) error {
+    time.Sleep(time.Second * 5)
+    return c.JSON(map[string]string{"hello": "world"})
 })
 ```
 
-When this endpoint is first requested, it takes 10.035 seconds for a response to be returned. After that, across the next 20 requests, it takes an average of 0.01094 seconds for a response to be returned.
+[Bombardier](https://github.com/codesenberg/bombardier) output (after 1 initial request)
+
+```
+> bombardier -c 125 -n 50000 http://127.0.0.1:3000
+Bombarding http://127.0.0.1:3000 with 50000 request(s) using 125 connection(s)
+ 50000 / 50000 [==================================================================================] 100.00% 121755/s 0s
+Done!
+Statistics        Avg      Stdev        Max
+  Reqs/sec    160417.53   20087.96  177005.07
+  Latency      774.96us   302.19us    16.00ms
+  HTTP codes:
+    1xx - 0, 2xx - 50000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:    29.81MB/s
+```
 
 ### Licence
 fiber-cache is free and open source software covered by the Mozilla Public Licence v2.
