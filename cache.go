@@ -2,7 +2,8 @@
 package fcache
 
 import (
-	"strconv"
+	"fmt"
+	"github.com/gofiber/fiber/v2/utils"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -39,27 +40,36 @@ type internalConfig struct {
 
 func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
+		fmt.Println()
+		path := utils.ImmutableString(c.Path() + " ")
+
+		if key == AutoGenerateKey {
+			key = path
+		}
+
+		fmt.Println("Key", "'" + key + "'")
+
 		val, found := Cache.Get(key)
 		if found {
+			fmt.Println("Found entry")
 			entry := val.(CacheEntry)
 			c.Response().SetBody(entry.Body)
 			c.Response().SetStatusCode(entry.StatusCode)
 			c.Response().Header.SetContentTypeBytes(entry.ContentType)
 			return nil
 		}
+		fmt.Println("Not found entry")
 
 		c.Locals("cacheKey", key)
 
 		err := c.Next()
 
 		if err == nil {
-			newEntry := CacheEntry{
+			Cache.Set(key, CacheEntry{
 				Body:        c.Response().Body(),
 				StatusCode:  c.Response().StatusCode(),
 				ContentType: c.Response().Header.ContentType(),
-			}
-
-			Cache.Set(key, newEntry, ttl)
+			}, ttl)
 		}
 
 		return err
@@ -67,29 +77,17 @@ func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
 	}
 }
 
-func generateKey() string {
-	key := "cacheKey-" + strconv.Itoa(currentKeyIndex)
-	currentKeyIndex += 1
-	return key
-}
-
 // New returns a new instance of the caching middleware, with an automatically generated key and the default TTL.
 func New() func(*fiber.Ctx) error {
-	return createMiddleware(generateKey(), Config.DefaultTTL)
+	return createMiddleware(AutoGenerateKey, Config.DefaultTTL)
 }
 
 // NewWithKey returns a new instance of the caching middleware with the default TTL and the option to set your own cache key. If this is an empty string or AutoGenerateKey, a key will be automatically generated.
 func NewWithKey(key string) func(*fiber.Ctx) error {
-	if key == AutoGenerateKey {
-		key = generateKey()
-	}
 	return createMiddleware(key, Config.DefaultTTL)
 }
 
 // NewWithTTL returns a new instance of the caching middleware with the option to define your own cache key and your own TTL. If the cache key you set is an empty string or AutoGenerateKey, a key will be automatically generated.
 func NewWithTTL(key string, ttl time.Duration) func(*fiber.Ctx) error {
-	if key == AutoGenerateKey {
-		key = generateKey()
-	}
 	return createMiddleware(key, ttl)
 }
