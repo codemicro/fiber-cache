@@ -2,11 +2,8 @@ package fcache
 
 import (
 	"bytes"
-	"fmt"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 
@@ -173,16 +170,9 @@ func Test_dynamicRoutes(t *testing.T) {
 	createNewCacheForTest()
 	app := fiber.New()
 
-	app.Use(logger.New(logger.Config{
-		Format:     "LOGGER: ${method} ${path}\n",
-		TimeFormat: "02-Jan-2006",
-		Output:     os.Stdout,
-	}))
-
 	responseText := "sampleResponse"
 
 	app.Get("/:id", New(), func(c *fiber.Ctx) error {
-		fmt.Println("ID", c.Params("id"))
 		return c.SendString(responseText + c.Params("id"))
 	})
 
@@ -191,12 +181,6 @@ func Test_dynamicRoutes(t *testing.T) {
 
 	returnedResponse1 := getResponseBody(resp1)
 	returnedResponse2 := getResponseBody(resp2)
-
-	fmt.Println(returnedResponse1, returnedResponse2)
-
-	for i, v := range Cache.Items() {
-		fmt.Println(" " + i + " ", v)
-	}
 
 	if returnedResponse1 == returnedResponse2 {
 		t.Fatal("The same response has been cached for a dynamic URL with different parameters")

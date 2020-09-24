@@ -2,7 +2,6 @@
 package fcache
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2/utils"
 	"time"
 
@@ -12,7 +11,6 @@ import (
 
 var (
 	Cache           *gc.Cache
-	currentKeyIndex = 0
 	Config          internalConfig
 )
 
@@ -38,27 +36,25 @@ type internalConfig struct {
 	DefaultTTL      time.Duration
 }
 
-func createMiddleware(key string, ttl time.Duration) func(*fiber.Ctx) error {
+func createMiddleware(selectedKey string, ttl time.Duration) func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
-		fmt.Println()
-		path := utils.ImmutableString(c.Path() + " ")
 
-		if key == AutoGenerateKey {
-			key = path
+		var key string
+
+		if selectedKey == AutoGenerateKey {
+			key = utils.ImmutableString(c.Path())
+		} else {
+			key = selectedKey
 		}
-
-		fmt.Println("Key", "'" + key + "'")
 
 		val, found := Cache.Get(key)
 		if found {
-			fmt.Println("Found entry")
 			entry := val.(CacheEntry)
 			c.Response().SetBody(entry.Body)
 			c.Response().SetStatusCode(entry.StatusCode)
 			c.Response().Header.SetContentTypeBytes(entry.ContentType)
 			return nil
 		}
-		fmt.Println("Not found entry")
 
 		c.Locals("cacheKey", key)
 
