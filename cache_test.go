@@ -165,3 +165,24 @@ func Test_correctContentTypeSet(t *testing.T) {
 		t.Fatal("The content type header is not being set correctly")
 	}
 }
+
+func Test_dynamicRoutes(t *testing.T) {
+	createNewCacheForTest()
+	app := fiber.New()
+
+	responseText := "sampleResponse"
+
+	app.Get("/:id", New(), func(c *fiber.Ctx) error {
+		return c.SendString(responseText + c.Params("id"))
+	})
+
+	resp1, _ := app.Test(httptest.NewRequest("GET", "/123", nil))
+	resp2, _ := app.Test(httptest.NewRequest("GET", "/789", nil))
+
+	returnedResponse1 := getResponseBody(resp1)
+	returnedResponse2 := getResponseBody(resp2)
+
+	if returnedResponse1 == returnedResponse2 {
+		t.Fatal("The same response has been cached for a dynamic URL with different parameters")
+	}
+}
