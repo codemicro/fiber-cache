@@ -53,6 +53,8 @@ app.Get("/your/route", fcache.New(), func(c *fiber.Ctx) error {
 
 ### Limitations
 
+#### 1: headers
+
 Aside from the `Content-Type` header, fiber-cache will not cache headers. If you want a certain header to be added to every response on a specific endpoint, you'll have to add a custom middleware before the cache middleware.
 
 ```go
@@ -63,6 +65,11 @@ app.Get("/", func(c *fiber.Ctx) error {
 ```
 
 The `Content-Type` header is the only header that is automatically cached and sent.
+
+#### 2: scope
+
+`fiber-cache` should not be registered as a global middleware (`app.Use(fcache.New())`) as it will cache every endpoint,
+including responses from POST and DELETE endpoints while also not running the handler endpoint.
 
 ### Reference
 
@@ -92,24 +99,24 @@ Consider the following example:
 ```go
 app.Get("/", fcache.New(), func(c *fiber.Ctx) error {
     time.Sleep(time.Second * 5)
-    return c.JSON(map[string]string{"hello": "world"})
+    return c.SendString("Hello world")
 })
 ```
 
 [Bombardier](https://github.com/codesenberg/bombardier) output (after 1 initial request)
 
 ```
-> bombardier -c 125 -n 50000 http://127.0.0.1:3000
-Bombarding http://127.0.0.1:3000 with 50000 request(s) using 125 connection(s)
- 50000 / 50000 [==================================================================================] 100.00% 121755/s 0s
+> bombardier -c 125 -n 50000 http://127.0.0.1:5000
+Bombarding http://127.0.0.1:5000 with 50000 request(s) using 125 connection(s)
+ 50000 / 50000 [=====================================================================================] 100.00% 124517/s 0s
 Done!
 Statistics        Avg      Stdev        Max
-  Reqs/sec    160417.53   20087.96  177005.07
-  Latency      774.96us   302.19us    16.00ms
+  Reqs/sec    160806.70   22109.28  175973.08
+  Latency      775.73us   274.91us    15.00ms
   HTTP codes:
     1xx - 0, 2xx - 50000, 3xx - 0, 4xx - 0, 5xx - 0
     others - 0
-  Throughput:    29.81MB/s
+  Throughput:    28.90MB/s
 ```
 
 ### Licence
