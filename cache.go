@@ -21,7 +21,7 @@ const (
 )
 
 func init() {
-	fmt.Println("fiber-cache is now deprecated, since Fiber v2.0.4 now includes a bundled cache middleware.\nSee https://github.com/gofiber/fiber/tree/master/middleware/cache for more info.")
+	fmt.Println("fiber-cache is now deprecated, since Fiber v2.0.3+ now includes a bundled cache middleware.\nSee https://github.com/gofiber/fiber/tree/master/middleware/cache for more info.")
 	Config.DefaultTTL = 5 * time.Minute
 	Config.CleanupInterval = 10 * time.Minute
 	Cache = gc.New(Config.DefaultTTL, Config.CleanupInterval)
