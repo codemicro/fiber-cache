@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [2.1.2] - 2020-09-29
+### Added
+* Deprecation notice.
+
 ## [2.1.1] - 2020-09-25
 ### Fixed
 * Dynamic routes are now properly cached ([#3](https://github.com/codemicro/fiber-cache/issues/3))
@@ -37,7 +41,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [1.0.0] - 2020-08-27
 * Initial release
 
-[Unreleased]: https://github.com/codemicro/fiber-cache/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/codemicro/fiber-cache/compare/v2.1.2...HEAD
+[2.1.1]: https://github.com/codemicro/fiber-cache/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/codemicro/fiber-cache/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/codemicro/fiber-cache/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/codemicro/fiber-cache/compare/v2.0.0...v2.0.1
