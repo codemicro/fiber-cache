@@ -3,6 +3,10 @@
 
 fiber-cache is middleware that provides caching for specific routes in a Fiber application.
 
+# fiber-cache is now deprecated
+
+Fiber v2.0.3+ now includes a bundled cache middleware, hence this package is no longer required. See https://github.com/gofiber/fiber/tree/master/middleware/cache for more info.
+
 ### Examples
 
 The most basic caching you can do is like this:
